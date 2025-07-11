@@ -5,10 +5,12 @@ import os
 import tempfile
 import logging
 from datetime import datetime
-from config import Config
-from google_maps_automation import GoogleMapsAutomation
+from ..config import Config
+from ..automation import GoogleMapsAutomation
 
 class WhatsAppBot:
+    """Bot principal de WhatsApp para manejo de feedback"""
+    
     def __init__(self):
         self.config = Config()
         self.client = Client(self.config.TWILIO_ACCOUNT_SID, self.config.TWILIO_AUTH_TOKEN)
@@ -16,6 +18,7 @@ class WhatsAppBot:
         self.setup_logging()
         
     def setup_logging(self):
+        """Configurar logging del bot"""
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
         
@@ -246,53 +249,4 @@ class WhatsAppBot:
             self.logger.error(f"Error en submit_to_google_maps: {str(e)}")
             error_message = "❌ Error interno del bot. Por favor, intenta de nuevo."
             self.send_message(from_number, error_message)
-            return error_message
-
-# Crear instancia global del bot
-bot = WhatsAppBot()
-
-# Configurar Flask app
-app = Flask(__name__)
-
-@app.route('/health', methods=['GET'])
-def health_check():
-    """Health check endpoint para Docker"""
-    return jsonify({
-        'status': 'healthy',
-        'service': 'whatsapp-feedback-bot',
-        'timestamp': datetime.now().isoformat()
-    })
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    """Webhook para recibir mensajes de Twilio"""
-    try:
-        # Obtener datos del mensaje
-        from_number = request.form.get('From', '').replace('whatsapp:', '')
-        message_body = request.form.get('Body', '')
-        media_urls = []
-        
-        # Obtener URLs de medios si los hay
-        num_media = int(request.form.get('NumMedia', 0))
-        for i in range(num_media):
-            media_url = request.form.get(f'MediaUrl{i}', '')
-            if media_url:
-                media_urls.append(media_url)
-                
-        # Procesar mensaje
-        response_message = bot.handle_incoming_message(from_number, message_body, media_urls)
-        
-        # Crear respuesta TwiML
-        resp = MessagingResponse()
-        resp.message(response_message)
-        
-        return str(resp)
-        
-    except Exception as e:
-        bot.logger.error(f"Error en webhook: {str(e)}")
-        resp = MessagingResponse()
-        resp.message("Lo siento, hubo un error. Por favor, intenta de nuevo.")
-        return str(resp)
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+            return error_message 

@@ -123,7 +123,7 @@ Un bot de WhatsApp que permite enviar reseñas y feedback directamente a Google 
 
 1. **Ejecutar el bot**
    ```bash
-   python run_bot.py
+   python app.py
    ```
 
 ### Interactuar por WhatsApp
@@ -140,23 +140,38 @@ Un bot de WhatsApp que permite enviar reseñas y feedback directamente a Google 
 
 ```
 feedback/
-├── whatsapp_bot.py              # Bot principal de WhatsApp
-├── google_maps_automation.py    # Automatización de Google Maps
-├── config.py                    # Configuración y variables
-├── run_bot.py                  # Script de ejecución
-├── requirements.txt            # Dependencias de Python
-├── env_example.txt            # Ejemplo de variables de entorno
-├── Dockerfile                  # Configuración de Docker
-├── docker-compose.yml          # Orquestación de servicios
+├── src/                      # Código fuente principal
+│   ├── __init__.py          # Paquete principal
+│   ├── bot/                 # Módulo del bot de WhatsApp
+│   │   ├── __init__.py
+│   │   └── whatsapp_bot.py  # Bot principal
+│   ├── automation/          # Módulo de automatización
+│   │   ├── __init__.py
+│   │   └── google_maps.py   # Automatización de Google Maps
+│   ├── config/              # Módulo de configuración
+│   │   ├── __init__.py
+│   │   └── settings.py      # Configuración y variables
+│   └── utils/               # Módulo de utilidades
+│       ├── __init__.py
+│       ├── logger.py        # Configuración de logging
+│       └── validators.py    # Validadores de datos
+├── tests/                   # Tests del proyecto
+│   ├── __init__.py
+│   └── test_validators.py   # Tests de validadores
+├── app.py                   # Aplicación principal Flask
+├── requirements.txt         # Dependencias de Python
+├── env_example.txt         # Ejemplo de variables de entorno
+├── Dockerfile              # Configuración de Docker
+├── docker-compose.yml      # Orquestación de servicios
 ├── docker-compose.override.yml # Configuración de desarrollo
-├── .dockerignore              # Archivos a ignorar en Docker
-├── scripts/                   # Scripts de utilidad
-│   ├── docker-build.sh       # Construir imagen Docker
-│   ├── docker-run.sh         # Ejecutar con Docker
-│   └── docker-stop.sh        # Detener contenedores
-├── logs/                     # Directorio de logs
-├── photos/                   # Directorio para fotos
-└── README.md                 # Este archivo
+├── .dockerignore          # Archivos a ignorar en Docker
+├── scripts/               # Scripts de utilidad
+│   ├── docker-build.sh   # Construir imagen Docker
+│   ├── docker-run.sh     # Ejecutar con Docker
+│   └── docker-stop.sh    # Detener contenedores
+├── logs/                 # Directorio de logs
+├── photos/               # Directorio para fotos
+└── README.md             # Este archivo
 ```
 
 ## ⚠️ Consideraciones Importantes

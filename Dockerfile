@@ -43,4 +43,4 @@ ENV PYTHONUNBUFFERED=1
 ENV FLASK_ENV=production
 
 # Comando para ejecutar la aplicación
-CMD ["python", "run_bot.py"] 
+CMD ["python", "app.py"] 

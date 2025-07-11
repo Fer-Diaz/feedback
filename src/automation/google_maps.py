@@ -11,6 +11,8 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import logging
 
 class GoogleMapsAutomation:
+    """Clase para automatizar la interacción con Google Maps"""
+    
     def __init__(self, email, password):
         self.email = email
         self.password = password
@@ -18,6 +20,7 @@ class GoogleMapsAutomation:
         self.setup_logging()
         
     def setup_logging(self):
+        """Configurar logging para la automatización"""
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
         

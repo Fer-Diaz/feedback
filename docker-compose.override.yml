@@ -9,4 +9,4 @@ services:
       - .:/app
       - ./logs:/app/logs
       - ./photos:/app/photos
-    command: ["python", "-u", "run_bot.py"] 
+    command: ["python", "-u", "app.py"] 
