@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  whatsapp-bot:
+    build: .
+    container_name: feedback-whatsapp-bot
+    ports:
+      - "5000:5000"
+    environment:
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_WHATSAPP_NUMBER=${TWILIO_WHATSAPP_NUMBER}
+      - GOOGLE_EMAIL=${GOOGLE_EMAIL}
+      - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
+      - ALLOWED_NUMBERS=${ALLOWED_NUMBERS}
+    volumes:
+      - ./logs:/app/logs
+      - ./photos:/app/photos
+    restart: unless-stopped
+    networks:
+      - feedback-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Servicio opcional para desarrollo con ngrok
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: feedback-ngrok
+    ports:
+      - "4040:4040"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command: http whatsapp-bot:5000
+    depends_on:
+      - whatsapp-bot
+    networks:
+      - feedback-network
+    profiles:
+      - development
+
+  # Servicio opcional para monitoreo con Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: feedback-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - feedback-network
+    profiles:
+      - monitoring
+
+  # Servicio opcional para visualización con Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: feedback-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - feedback-network
+    profiles:
+      - monitoring
+
+networks:
+  feedback-network:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data: 

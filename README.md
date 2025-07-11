@@ -20,18 +20,15 @@ Un bot de WhatsApp que permite enviar reseñas y feedback directamente a Google 
 
 ## 🛠️ Instalación
 
+### Opción 1: Con Docker (Recomendado)
+
 1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/Fer-Diaz/feedback.git
    cd feedback
    ```
 
-2. **Instalar dependencias**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Configurar variables de entorno**
+2. **Configurar variables de entorno**
    ```bash
    cp env_example.txt .env
    ```
@@ -49,7 +46,42 @@ Un bot de WhatsApp que permite enviar reseñas y feedback directamente a Google 
 
    # Bot Configuration
    ALLOWED_NUMBERS=+1234567890,+0987654321
+
+   # Docker Development (Optional)
+   NGROK_AUTHTOKEN=your_ngrok_authtoken_here
    ```
+
+3. **Ejecutar con Docker**
+   ```bash
+   # Modo producción
+   docker-compose up
+
+   # Modo desarrollo (con hot reload)
+   docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+
+   # Con ngrok para desarrollo
+   ./scripts/docker-run.sh --dev --ngrok
+   ```
+
+### Opción 2: Instalación Local
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/Fer-Diaz/feedback.git
+   cd feedback
+   ```
+
+2. **Instalar dependencias**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configurar variables de entorno**
+   ```bash
+   cp env_example.txt .env
+   ```
+   
+   Edita el archivo `.env` con tus credenciales (ver ejemplo arriba).
 
 ## 🔧 Configuración de Twilio
 
@@ -68,31 +100,63 @@ Un bot de WhatsApp que permite enviar reseñas y feedback directamente a Google 
 
 ## 🚀 Uso
 
+### Con Docker
+
+1. **Ejecutar el bot**
+   ```bash
+   # Modo producción
+   docker-compose up
+
+   # Modo desarrollo
+   ./scripts/docker-run.sh --dev
+
+   # Con ngrok para desarrollo
+   ./scripts/docker-run.sh --dev --ngrok
+   ```
+
+2. **Detener el bot**
+   ```bash
+   ./scripts/docker-stop.sh
+   ```
+
+### Sin Docker
+
 1. **Ejecutar el bot**
    ```bash
    python run_bot.py
    ```
 
-2. **Interactuar por WhatsApp**
-   - Envía un mensaje al número de Twilio
-   - Sigue las instrucciones del bot:
-     1. Escribe el nombre del lugar
-     2. Califica del 1 al 5
-     3. Escribe tu reseña
-     4. Agrega fotos (opcional)
-     5. Confirma el envío
+### Interactuar por WhatsApp
+
+- Envía un mensaje al número de Twilio
+- Sigue las instrucciones del bot:
+  1. Escribe el nombre del lugar
+  2. Califica del 1 al 5
+  3. Escribe tu reseña
+  4. Agrega fotos (opcional)
+  5. Confirma el envío
 
 ## 📁 Estructura del Proyecto
 
 ```
 feedback/
-├── whatsapp_bot.py          # Bot principal de WhatsApp
-├── google_maps_automation.py # Automatización de Google Maps
-├── config.py                # Configuración y variables
-├── run_bot.py              # Script de ejecución
-├── requirements.txt        # Dependencias de Python
-├── env_example.txt        # Ejemplo de variables de entorno
-└── README.md              # Este archivo
+├── whatsapp_bot.py              # Bot principal de WhatsApp
+├── google_maps_automation.py    # Automatización de Google Maps
+├── config.py                    # Configuración y variables
+├── run_bot.py                  # Script de ejecución
+├── requirements.txt            # Dependencias de Python
+├── env_example.txt            # Ejemplo de variables de entorno
+├── Dockerfile                  # Configuración de Docker
+├── docker-compose.yml          # Orquestación de servicios
+├── docker-compose.override.yml # Configuración de desarrollo
+├── .dockerignore              # Archivos a ignorar en Docker
+├── scripts/                   # Scripts de utilidad
+│   ├── docker-build.sh       # Construir imagen Docker
+│   ├── docker-run.sh         # Ejecutar con Docker
+│   └── docker-stop.sh        # Detener contenedores
+├── logs/                     # Directorio de logs
+├── photos/                   # Directorio para fotos
+└── README.md                 # Este archivo
 ```
 
 ## ⚠️ Consideraciones Importantes
@@ -111,10 +175,24 @@ feedback/
 
 ## 🐛 Solución de Problemas
 
-### Error de Chrome Driver
+### Error de Docker
 ```bash
-# Instalar Chrome si no está instalado
-# El webdriver-manager se encarga automáticamente
+# Verificar que Docker esté instalado
+docker --version
+
+# Verificar que docker-compose esté instalado
+docker-compose --version
+
+# Limpiar contenedores e imágenes
+docker-compose down
+docker system prune -f
+```
+
+### Error de Chrome Driver (Docker)
+```bash
+# El Dockerfile incluye Chrome automáticamente
+# Si hay problemas, reconstruir la imagen:
+docker-compose build --no-cache
 ```
 
 ### Error de Twilio
@@ -126,6 +204,10 @@ feedback/
 - Verifica que las credenciales de Google sean correctas
 - Asegúrate de que la cuenta no tenga 2FA habilitado
 - Revisa que no haya captchas
+
+### Error de Ngrok
+- Verifica que el token de ngrok esté configurado en .env
+- Revisa que el puerto 4040 esté disponible
 
 ## 📝 Licencia
 

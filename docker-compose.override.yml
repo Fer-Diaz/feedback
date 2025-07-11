@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  whatsapp-bot:
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+      - ./photos:/app/photos
+    command: ["python", "-u", "run_bot.py"] 

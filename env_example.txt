@@ -8,4 +8,7 @@ GOOGLE_EMAIL=your_google_email@gmail.com
 GOOGLE_PASSWORD=your_google_password_here
 
 # Bot Configuration
-ALLOWED_NUMBERS=+1234567890,+0987654321 
+ALLOWED_NUMBERS=+1234567890,+0987654321
+
+# Docker Development (Optional)
+NGROK_AUTHTOKEN=your_ngrok_authtoken_here 

@@ -254,6 +254,15 @@ bot = WhatsAppBot()
 # Configurar Flask app
 app = Flask(__name__)
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint para Docker"""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'whatsapp-feedback-bot',
+        'timestamp': datetime.now().isoformat()
+    })
+
 @app.route('/webhook', methods=['POST'])
 def webhook():
     """Webhook para recibir mensajes de Twilio"""
